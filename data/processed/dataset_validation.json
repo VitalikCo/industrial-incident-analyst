@@ -1,0 +1,92 @@
+{
+  "validated_at_utc": "2026-11-12T18:40:24.238171+00:00",
+  "manifest": "data/processed/manifest.jsonl",
+  "manifest_records": 133,
+  "manifest_parse_errors": 0,
+  "pdf_directory_files": 106,
+  "partial_download_files": [],
+  "pdf_state_counts": {
+    "missing_file": 1,
+    "no_pdf_path": 30,
+    "valid_pdf": 102
+  },
+  "collection_status_counts": {
+    "detail_page_failed": 14,
+    "downloaded": 102,
+    "no_final_report_pdf_link_found": 15,
+    "pdf_download_failed": 1,
+    "replaced_with_primary_report": 1
+  },
+  "valid_pdf_records": 102,
+  "missing_or_invalid_pdf_records": 1,
+  "records_without_pdf_path": 30,
+  "orphan_pdf_files": [
+    "data/raw/reports/macondo-investigation-volume-1.pdf",
+    "data/raw/reports/macondo-investigation-volume-2.pdf",
+    "data/raw/reports/macondo-investigation-volume-3.pdf",
+    "data/raw/reports/macondo-investigation-volume-4.pdf"
+  ],
+  "duplicate_pdf_hash_groups": [
+    [
+      "data/raw/reports/bio-lab-conyers-chemical-release.pdf",
+      "data/raw/reports/bio-lab-lake-charles-chemical-fire-and-release.pdf"
+    ]
+  ],
+  "records_flagged_for_manual_type_review": [
+    {
+      "title": "CSB Safety Study: Remote Isolation of Process Equipment",
+      "detail_url": "https://www.csb.gov/csb-safety-study-remote-isolation-of-process-equipment/",
+      "hint": "possible_non_incident_publication"
+    },
+    {
+      "title": "Key Lessons for Preventing Incidents from Flammable Chemicals in Educational Demonstrations",
+      "detail_url": "https://www.csb.gov/key-lessons-for-preventing-incidents-from-flammable-chemicals-in-educational-demonstrations/",
+      "hint": "possible_non_incident_publication"
+    },
+    {
+      "title": "Oil Tank Safety Study",
+      "detail_url": "https://www.csb.gov/oil-tank-safety-study/",
+      "hint": "possible_non_incident_publication"
+    },
+    {
+      "title": "Seven Key Lessons to Prevent Worker Deaths During Hot Work In and Around Tanks",
+      "detail_url": "https://www.csb.gov/seven-key-lessons-to-prevent-worker-deaths-during-hot-work-in-and-around-tanks/",
+      "hint": "possible_non_incident_publication"
+    },
+    {
+      "title": "Emergency Shutdown Systems for Chlorine Transfer",
+      "detail_url": "https://www.csb.gov/emergency-shutdown-systems-for-chlorine-transfer/",
+      "hint": "possible_non_incident_publication"
+    },
+    {
+      "title": "Combustible Dust Hazard Investigation",
+      "detail_url": "https://www.csb.gov/combustible-dust-hazard-investigation/",
+      "hint": "possible_non_incident_publication"
+    },
+    {
+      "title": "Sodium Hydrosulfide: Preventing Harm",
+      "detail_url": "https://www.csb.gov/sodium-hydrosulfide-preventing-harm/",
+      "hint": "possible_non_incident_publication"
+    },
+    {
+      "title": "Improving Reactive Hazard Management",
+      "detail_url": "https://www.csb.gov/improving-reactive-hazard-management/",
+      "hint": "possible_non_incident_publication"
+    },
+    {
+      "title": "Management of Change",
+      "detail_url": "https://www.csb.gov/management-of-change/",
+      "hint": "possible_non_incident_publication"
+    }
+  ],
+  "recommendations_workbook": {
+    "exists": true,
+    "path": "data/raw/recommendations/csb_recommendations_latest.xlsx",
+    "valid_zip_xlsx": true,
+    "size_bytes": 227207,
+    "sha256_actual": "3c20173620b7f6175b3f4388027783d3644cdf00edcaad426be989d4c943bbc2",
+    "metadata_sha256_matches": true,
+    "snapshot_label": "Recommendations data as of the September 16, 2026, Board Vote",
+    "metadata_collected_at_utc": "2026-11-11T18:00:56.814415+00:00"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "built_at_utc": "2026-11-15T02:18:30.236620+00:00",
+  "manifest_records": 133,
+  "document_catalog_records": 137,
+  "investigation_catalog_records": 85,
+  "incident_catalog_records": 77,
+  "incident_catalog_status_counts": {
+    "automatic_candidate_mapping": 74,
+    "verified_or_explicit_override": 3
+  },
+  "incidents_ready_for_source_case_exclusion": 77,
+  "incidents_with_provisional_documents": 74,
+  "recommendation_catalog_records": 1061,
+  "recommendations_linked_to_incident_ids": 27,
+  "recommendations_with_candidate_incident_links": 641,
+  "verified_recommendation_incident_links": 27,
+  "candidate_recommendation_incident_links": 707,
+  "documents_with_inferred_candidate_incident_mapping": 0,
+  "inferred_provisional_document_incident_links": 0,
+  "recommendation_snapshot": {
+    "snapshot_date": "2026-09-16",
+    "snapshot_label": "Recommendations data as of the September 16, 2026, Board Vote",
+    "source_page": "https://www.csb.gov/recommendations/statistics/",
+    "download_url": "https://www.csb.gov/assets/1/6/All_rec_status_update_9-16-2026.xlsx",
+    "local_path": "data/raw/recommendations/csb_recommendations_latest.xlsx",
+    "sha256": "3c20173620b7f6175b3f4388027783d3644cdf00edcaad426be989d4c943bbc2",
+    "collected_at_utc": "2026-11-11T18:00:56.814415+00:00"
+  },
+  "classification_candidate_records": 70,
+  "automatically_classified_documents": 70,
+  "documents_with_rule_based_classification": 59,
+  "documents_requested_but_blocked_by_missing_text": 0,
+  "documents_requested_but_blocked_by_missing_incident_mapping": 0,
+  "incidents_enabled_for_retrieval": 77,
+  "explicit_source_override_documents": 8,
+  "documents_with_candidate_incident_ids": 68,
+  "documents_with_local_files": 107,
+  "documents_with_text_source_files": 107,
+  "outputs": [
+    "/home/vital/projects/industrial-incident-analyst/data/processed/document_catalog.jsonl",
+    "/home/vital/projects/industrial-incident-analyst/data/processed/document_catalog.csv",
+    "/home/vital/projects/industrial-incident-analyst/data/processed/investigation_catalog.jsonl",
+    "/home/vital/projects/industrial-incident-analyst/data/processed/investigation_catalog.csv",
+    "/home/vital/projects/industrial-incident-analyst/data/processed/incident_catalog.jsonl",
+    "/home/vital/projects/industrial-incident-analyst/data/processed/incident_catalog.csv",
+    "/home/vital/projects/industrial-incident-analyst/data/processed/recommendation_catalog.jsonl",
+    "/home/vital/projects/industrial-incident-analyst/data/processed/recommendation_catalog.csv"
+  ],
+  "important_note": "Document-level manual review is not part of the workflow. Candidate classifications and candidate incident mappings are machine-applied from source-check metadata and remain explicitly provisional; only configs/document_overrides.yaml mappings are marked as explicit overrides. Source-case exclusion uses the whole investigation key and includes all catalogued sibling documents plus the union of linked recommendation IDs. For a multi-event investigation this can over-exclude sibling events, intentionally favoring leakage prevention. Recommendation incident_ids contains explicit/verified links only; candidate_incident_ids retains automatic candidate links. Recommendation statuses are always tied to the dated source workbook snapshot."
+}

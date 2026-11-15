@@ -1,0 +1,25 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.env
+*.py[cod]
+*.bak
+.DS_Store
+
+# Keep downloaded source PDFs/XLSX local; do not push large source files.
+#data/raw/*
+!data/raw/.gitkeep
+
+# Commit collection manifest and summary, but not generated chunks or indexes.
+#data/processed/*
+!data/processed/
+!data/processed/manifest.jsonl
+!data/processed/collection_summary.json
+
+runs/
+
+# Keep the reproducible catalog outputs and their source-backed classification input.
+!data/processed/document_catalog.jsonl
+!data/processed/document_catalog.csv
+!data/processed/document_classification_candidates.csv

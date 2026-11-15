@@ -1,0 +1,18 @@
+{
+  "collected_at_utc": "2026-11-15T02:05:57.298699+00:00",
+  "archive_pages_checked_this_run": 3,
+  "investigation_detail_pages_in_manifest": 133,
+  "records_with_valid_final_report_pdf": 102,
+  "records_without_valid_final_report_pdf": 31,
+  "status_counts": {
+    "downloaded": 100,
+    "replaced_with_primary_report": 3,
+    "no_final_report_pdf_link_found": 15,
+    "detail_page_failed": 14,
+    "pdf_download_failed": 1
+  },
+  "failures_this_run": 0,
+  "interrupted_by_user": false,
+  "recommendations_spreadsheet": null,
+  "manifest": "data/processed/manifest.jsonl"
+}

@@ -1,0 +1,9 @@
+{
+  "label": "Recommendations data as of the September 16, 2026, Board Vote",
+  "source_page": "https://www.csb.gov/recommendations/statistics/",
+  "download_url": "https://www.csb.gov/assets/1/6/All_rec_status_update_9-16-2026.xlsx",
+  "local_path": "data/raw/recommendations/csb_recommendations_latest.xlsx",
+  "bytes": 227207,
+  "sha256": "3c20173620b7f6175b3f4388027783d3644cdf00edcaad426be989d4c943bbc2",
+  "collected_at_utc": "2026-11-11T18:00:56.814415+00:00"
+}

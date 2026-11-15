@@ -1,0 +1,177 @@
+version: 1
+
+# Identifier handling rules:
+# - investigation_id preserves the year width and sequence width printed on the PDF cover;
+# - dots are normalized to hyphens and OCR'd state letters are uppercased;
+# - recommendation_match_key is a separate join key: 2-digit years are expanded using
+#   the pivot below and sequence numbers are converted to integers (e.g. 98-007 -> 1998-7).
+report_id_policy:
+  two_digit_year_pivot: 30
+  preserve_report_id_sequence_width: true
+
+# Explicit source-specific corrections and registrations; these are configuration overrides, not a document-review queue.
+# The manifest remains the immutable record of the website collection run;
+# this file adds curation without rewriting collection history.
+manual_documents:
+  # Macondo main investigation: four volumes, ONE investigation and ONE incident.
+  - document_id: CSB-5993
+    csb_document_id: "5993"
+    title: Macondo Investigation Report — Volume 4
+    investigation_id: 2010-10-I-OS
+    incident_ids: [MACONDO_2010]
+    source_detail_urls: [https://www.csb.gov/macondo-blowout-and-explosion/]
+    document_type: investigation_report_volume
+    corpus_role: primary_incident_evidence
+    retrieval_enabled: true
+    local_path: data/raw/reports/macondo-investigation-volume-4.pdf
+    source_url: https://www.csb.gov/file.aspx?DocumentId=5993
+    expected_pages: 133
+    expected_words: 58848
+    language: en
+    text_extraction_method: native_pdf_text
+    notes: Regulatory findings and attributes of an effective regulator.
+
+  - document_id: CSB-5930
+    csb_document_id: "5930"
+    title: Macondo Investigation Report — Volume 1
+    investigation_id: 2010-10-I-OS
+    incident_ids: [MACONDO_2010]
+    source_detail_urls: [https://www.csb.gov/macondo-blowout-and-explosion/]
+    document_type: investigation_report_volume
+    corpus_role: primary_incident_evidence
+    retrieval_enabled: true
+    local_path: data/raw/reports/macondo-investigation-volume-1.pdf
+    source_url: https://www.csb.gov/file.aspx?DocumentId=5930
+    expected_pages: 37
+    expected_words: 10586
+    language: en
+    text_extraction_method: native_pdf_text
+    notes: Incident background and event sequence.
+
+  - document_id: CSB-5931
+    csb_document_id: "5931"
+    title: Macondo Investigation Report — Volume 2
+    investigation_id: 2010-10-I-OS
+    incident_ids: [MACONDO_2010]
+    source_detail_urls: [https://www.csb.gov/macondo-blowout-and-explosion/]
+    document_type: investigation_report_volume
+    corpus_role: primary_incident_evidence
+    retrieval_enabled: true
+    local_path: data/raw/reports/macondo-investigation-volume-2.pdf
+    source_url: https://www.csb.gov/file.aspx?DocumentId=5931
+    expected_pages: 112
+    expected_words: 41611
+    language: en
+    text_extraction_method: native_pdf_text
+    notes: Blowout preventer technical failure analysis and barrier management.
+
+  - document_id: CSB-5992
+    csb_document_id: "5992"
+    title: Macondo Investigation Report — Volume 3
+    investigation_id: 2010-10-I-OS
+    incident_ids: [MACONDO_2010]
+    source_detail_urls: [https://www.csb.gov/macondo-blowout-and-explosion/]
+    document_type: investigation_report_volume
+    corpus_role: primary_incident_evidence
+    retrieval_enabled: true
+    local_path: data/raw/reports/macondo-investigation-volume-3.pdf
+    source_url: https://www.csb.gov/file.aspx?DocumentId=5992
+    expected_pages: 247
+    expected_words: 105073
+    language: en
+    text_extraction_method: native_pdf_text
+    notes: Human factors, organizational learning, safety culture and governance.
+
+  - document_id: CSB-5997
+    csb_document_id: "5997"
+    title: Macondo Investigation Report — Executive Summary
+    investigation_id: 2010-10-I-OS
+    incident_ids: [MACONDO_2010]
+    source_detail_urls: [https://www.csb.gov/macondo-blowout-and-explosion/]
+    document_type: executive_summary
+    corpus_role: supplementary_incident_evidence
+    retrieval_enabled: true
+    local_path: data/raw/supplementary/macondo-executive-summary.pdf
+    source_url: https://www.csb.gov/file.aspx?DocumentId=5997
+    expected_pages: 24
+    language: en
+    text_extraction_method: native_pdf_text
+    notes: Summary of the four-volume investigation; never count as a separate incident.
+
+  - document_id: CSB-6053
+    csb_document_id: "6053"
+    title: Macondo Congressional Letters — Offshore Whistleblower Protection
+    investigation_id: 2010-10-I-OS
+    incident_ids: [MACONDO_2010]
+    source_detail_urls: [https://www.csb.gov/macondo-blowout-and-explosion/]
+    document_type: congressional_correspondence
+    corpus_role: supplementary_non_investigation_material
+    retrieval_enabled: false
+    local_path: data/raw/supplementary/macondo-congressional-letters.pdf
+    text_source_path: data/processed/ocr/macondo-congressional-letters_ocr.pdf
+    source_url: https://www.csb.gov/file.aspx?DocumentId=6053
+    expected_pages: 12
+    language: en
+    text_extraction_method: ocrmypdf_tesseract
+    notes: This is the 12-page congressional correspondence previously OCRed, NOT the technical Macondo investigation report.
+
+# The TPC source PDF has an unreliable embedded text layer. Use the reviewed OCR derivative
+# as the text source while retaining the original PDF as the visual/source document.
+manual_overrides:
+  - match:
+      detail_url: https://www.csb.gov/tpc-port-neches-explosions-and-fire/
+    document_id: CSB-6203
+    investigation_id: 2020-02-I-TX
+    incident_ids: [TPC_PORT_NECHES_2019]
+    document_type: investigation_report
+    corpus_role: primary_incident_evidence
+    retrieval_enabled: true
+    text_source_path: data/processed/ocr/tpc-port-neches-explosions-and-fire_ocr.pdf
+    text_extraction_method: ocrmypdf_tesseract_force_ocr
+    ocr_status: human_reviewed_with_minor_errors
+    ocr_pages_reviewed: [21, 22, 23]
+    ocr_pages_to_review: [42]
+    quality_note: >-
+      Main body reads coherently and technical terminology, section headings and page order
+      were manually checked. Minor OCR artifacts remain. Tesseract emitted a poor-OCR/diacritics
+      warning for page 42, which still needs a spot check before final acceptance.
+
+# A repeated CSB archive page points to the same 2020 Bio-Lab report (DocumentId 6330).
+# The catalog builder groups it by document ID/hash and preserves both source URLs as aliases.
+# It must NOT create a second incident from the misleading archive-page title.
+known_alias_groups:
+  - document_id: CSB-6330
+    investigation_id: 2020-05-I-LA
+    canonical_title: Chemical Reaction, Decomposition, and Toxic Gas Release at Bio-Lab, Inc.
+    incident_ids: [BIOLAB_LAKE_CHARLES_2020]
+    source_detail_urls:
+      - https://www.csb.gov/bio-lab-conyers-chemical-release-/
+      - https://www.csb.gov/bio-lab-lake-charles-chemical-fire-and-release-/
+    note: >-
+      Both archive entries resolve to the same 125-page report for the August 27, 2020 event
+      in Westlake, Louisiana. Keep one document and one incident; do not treat the Conyers
+      archive label as a separate 2020 incident.
+
+
+investigation_overrides:
+  - investigation_id: 2010-10-I-OS
+    incident_ids: [MACONDO_2010]
+    recommendation_ids:
+      - 2010-10-I-OS-1
+      - 2010-10-I-OS-2
+      - 2010-10-I-OS-3
+      - 2010-10-I-OS-4
+      - 2010-10-I-OS-5
+      - 2010-10-I-OS-6
+      - 2010-10-I-OS-7
+      - 2010-10-I-OS-8
+      - 2010-10-I-OS-9
+      - 2010-10-I-OS-10
+      - 2010-10-I-OS-11
+      - 2010-10-I-OS-12
+      - 2010-10-I-OS-13
+      - 2010-10-I-OS-14
+      - 2010-10-I-OS-15
+      - 2010-10-I-OS-16
+    source_detail_urls: [https://www.csb.gov/macondo-blowout-and-explosion/]
+    mapping_status: explicit_override
