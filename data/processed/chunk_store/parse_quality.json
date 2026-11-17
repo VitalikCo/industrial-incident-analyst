@@ -1,0 +1,41 @@
+{
+  "built_at_utc": "2026-11-16T23:11:50.602766+00:00",
+  "catalog_path": "/home/vital/projects/industrial-incident-analyst/data/processed/document_catalog.jsonl",
+  "selected_documents": 79,
+  "parsed_documents": 79,
+  "skipped_missing_sources": 0,
+  "failed_documents": 0,
+  "page_count": 6787,
+  "total_text_chars": 13940394,
+  "pages_with_text": 6635,
+  "empty_pages": 152,
+  "low_text_pages": 321,
+  "pages_with_replacement_characters": 0,
+  "numeric_tokens_extracted": 132926,
+  "tables_detected": 613,
+  "headings_detected": 7865,
+  "reader_page_counts": {
+    "pymupdf": 6787
+  },
+  "mean_chars_per_page": 2054.0,
+  "retrieval_chunks": 11266,
+  "table_chunks": 612,
+  "section_parent_chunks": 7865,
+  "section_records": 7865,
+  "documents_with_quality_flags": 34,
+  "document_quality_status_counts": {
+    "parsed": 55,
+    "review_needed": 24
+  },
+  "errors": [],
+  "outputs": [
+    "data/processed/chunk_store/documents.jsonl",
+    "data/processed/chunk_store/pages.jsonl",
+    "data/processed/chunk_store/chunks.jsonl",
+    "data/processed/chunk_store/sections.jsonl",
+    "data/processed/chunk_store/parse_quality.json",
+    "data/processed/chunk_store/parse_quality.csv",
+    "data/processed/chunk_store/page_quality.csv"
+  ],
+  "quality_note": "Coverage, empty/low-text pages, numeric-token counts, character anomalies, detected tables/headings, and runtime are objective parsing diagnostics. They are not CER/WER or a claim of transcription accuracy because this CSB corpus has no page-level ground-truth transcription."
+}
