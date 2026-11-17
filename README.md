@@ -109,6 +109,22 @@ Document classification is automatic, but the evaluation labels remain human-gro
 
 The report used to formulate a golden-set query must be excluded from retrieval for that query. The incident catalog creates a whole-investigation exclusion bundle containing catalogued source documents and linked recommendation records. For multi-event investigations, this may also exclude sibling events; the policy intentionally favors avoiding answer leakage over retaining every potentially relevant item.
 
+## Document Parsing and chunk store
+
+The Document Parsing stage creates page-, section- and chunk-level records from the English documents currently enabled for retrieval. It uses PyMuPDF text extraction and table detection by default; an optional Tesseract fallback can OCR pages with a nearly empty text layer.
+
+```bash
+# First run a small smoke test against a document with a local text source.
+uv run python scripts/parse_csb_documents.py --document-id CSB-6203 --limit-pages 4 --output-dir /tmp/csb-parser-smoke
+uv run python scripts/validate_chunk_store.py --store-dir /tmp/csb-parser-smoke
+
+# Then parse the complete selected corpus and validate it.
+uv run python scripts/parse_csb_documents.py
+uv run python scripts/validate_chunk_store.py
+```
+
+The full store is written to `data/processed/chunk_store/` (`documents.jsonl`, `pages.jsonl`, `sections.jsonl`, `chunks.jsonl`, `parse_quality.json`, `parse_quality.csv`). The original PDFs remain the citation sources; `text_source_path` is used for extraction when a separate OCR derivative exists. Explicit and candidate incident IDs remain separate in every chunk. Read [docs/document-parsing.md](docs/document-parsing.md) for parser rules, chunking, quality metrics, limitations and the optional OCR setup. The design adapts the structural chunk-store and page-provenance ideas from the lecturers' [Practice 03](https://github.com/Industrial-AI-Research-Lab/course-ml-for-industry-data/tree/main/practice-03-document-parsing).
+
 ## Recommendation status snapshots
 
 Recommendation status is time-dependent. Every answer must identify the snapshot date used for a status claim (currently `2026-09-16` in the included workbook metadata), rather than describing the value as indefinitely current.
