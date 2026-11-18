@@ -1,0 +1,13 @@
+{
+  "query_seed_count": 55,
+  "unique_source_investigations": 55,
+  "source_mapping_status_counts": {
+    "automatic_candidate_mapping": 54,
+    "verified_or_explicit_override": 1
+  },
+  "source_exclusion_ready_count": 55,
+  "query_texts_anonymized": true,
+  "relevance_labels_created": 0,
+  "reference_answers_created": 0,
+  "status": "55_query_seeds_30_approved_25_pending_human_review_not_final_golden_set"
+}

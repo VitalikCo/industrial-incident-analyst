@@ -1,0 +1,15 @@
+{
+  "previous_query_count": 30,
+  "added_query_count": 25,
+  "total_query_count": 55,
+  "approved_queries_preserved": 30,
+  "new_queries_awaiting_review": 25,
+  "unique_source_investigations": 55,
+  "new_source_mapping_status_counts": {
+    "automatic_candidate_mapping": 25
+  },
+  "source_case_exclusion_ready": true,
+  "relevance_labels_created": 0,
+  "reference_answers_created": 0,
+  "status": "55_query_seeds_pending_review_of_new_25_and_human_relevance_annotation"
+}

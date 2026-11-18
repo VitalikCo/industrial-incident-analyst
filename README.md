@@ -105,9 +105,31 @@ See [docs/automatic-document-classification.md](docs/automatic-document-classifi
 
 ## Evaluation and the golden set
 
-Document classification is automatic, but the evaluation labels remain human-grounded. Build a pooled set of at least 30 labelled query–incident examples (50+ is the target for the highest course rubric band). Use relevance grades 0/1/2 and evidence from the CSB sources. These labels are also needed to check whether the Phi-4-mini judge agrees with human judgments. This is a separate task from reviewing all 70 document records.
+The initial Golden Set seed file contains 30 anonymized English query scenarios from 30 distinct CSB investigations. Each seed includes source evidence and the complete whole-investigation exclusion bundle. These are **draft query seeds**, not final gold labels: relevance judgments and reference answers are intentionally empty until the human annotation process is complete. The system under test receives only `query_text`, never the hidden `source_case` metadata.
 
-The report used to formulate a golden-set query must be excluded from retrieval for that query. The incident catalog creates a whole-investigation exclusion bundle containing catalogued source documents and linked recommendation records. For multi-event investigations, this may also exclude sibling events; the policy intentionally favors avoiding answer leakage over retaining every potentially relevant item.
+Review `data/golden/query_review.csv`, approve/revise the query scenarios, then apply edits:
+
+```bash
+uv run python scripts/apply_golden_query_review.py
+uv run python scripts/validate_golden_set.py
+```
+
+After BM25, Dense and Hybrid produce incident-level top-10 results, form the blinded pooled candidate set (retriever identity is kept in a separate internal provenance file):
+
+```bash
+uv run python scripts/build_relevance_pool.py --retrieval-results runs/retrieval/retrieval_results.jsonl --top-k 10
+```
+
+Human relevance grades 0/1/2 and page-grounded rationales go into `data/golden/relevance_judgments.jsonl`. Historical causes and recommendations, each nested under their incident and tied to document/page/section evidence, go into `data/golden/reference_answers.jsonl`. Do not treat absent judgments as grade 0. Use nDCG@5 as the primary graded retrieval metric and Recall@5 as a secondary metric over the judged pool. Queries with no judged relevant cases have undefined nDCG and must be reported separately.
+
+Validate and compile only after every query is human-approved and has complete judgments (or an explicitly reviewed no-relevant/abstention status):
+
+```bash
+uv run python scripts/validate_golden_set.py --require-approved-queries --require-judgments
+uv run python scripts/compile_golden_set.py
+```
+
+See [docs/golden-set-workflow.md](docs/golden-set-workflow.md) and [docs/golden-set-labeling-guide.md](docs/golden-set-labeling-guide.md).
 
 ## Document Parsing and chunk store
 
