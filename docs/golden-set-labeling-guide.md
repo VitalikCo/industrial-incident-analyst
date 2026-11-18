@@ -66,3 +66,12 @@ For each query, form a candidate pool from the union of top-10 results from BM25
 Recall@5 and nDCG@5 are therefore measured against this **pooled judged set**, not a guaranteed exhaustive list of every relevant CSB incident. Report pool depth and this limitation. If new systems later retrieve unjudged incidents, send them to annotation before treating them as non-relevant.
 
 Queries with no judged relevant incident have undefined nDCG for the primary ranking comparison. Exclude them from the nDCG mean and report their count as a separate `no_known_relevant_case` slice. Evaluate abstention behavior on this slice separately; do not silently convert an undefined nDCG into a perfect score.
+
+
+## Operational workflow in this repository
+
+The initial repository seed file is `data/golden/query_seeds.jsonl` (30 anonymized, draft query scenarios). The `source_case` and `source_case_exclusion` fields are metadata for evaluation and leakage prevention; only `query_text` is sent to a retriever. Review/edit `data/golden/query_review.csv`, approve each query, and apply changes with `uv run python scripts/apply_golden_query_review.py`.
+
+After S0 BM25, S1 Dense and S2 Hybrid have run, export the top 10 incident-level results from each as `runs/retrieval/retrieval_results.jsonl`, then build the blinded union pool with `uv run python scripts/build_relevance_pool.py --retrieval-results runs/retrieval/retrieval_results.jsonl --top-k 10`. The annotation CSV hides retriever identity/rank/score; `pool_provenance.jsonl` is internal and must not be shown to annotators. Source-case exclusion is enforced at the whole-investigation level.
+
+Human labels are stored in `data/golden/relevance_judgments.jsonl`; historical causes and recommendations with page-grounded citations are stored in `data/golden/reference_answers.jsonl`. No labels are auto-filled. Run `uv run python scripts/validate_golden_set.py` during development, and use `--require-approved-queries --require-judgments` before compiling the final set. See [golden-set-workflow.md](golden-set-workflow.md) for schemas, commands and answer-reference rules.

@@ -1,0 +1,21 @@
+{
+  "query_seeds": 55,
+  "unique_source_investigations": 55,
+  "approved_queries": 55,
+  "relevance_judgments": 0,
+  "queries_with_any_judgments": 0,
+  "queries_with_positive_relevant_cases": 0,
+  "queries_with_no_judged_relevant_case": 0,
+  "queries_ready_for_ranking_metrics": 0,
+  "reference_answer_records": 0,
+  "positive_relevance_cases_missing_reference_answers": 0,
+  "structurally_valid": true,
+  "ready_for_evaluation": false,
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "A seed-only dataset is not yet a final golden set.",
+    "nDCG is undefined for queries with no judged relevant incident; report that slice separately.",
+    "The relevance pool is incomplete by design: annotate the union of top-10 BM25/Dense/Hybrid results plus source-known cases."
+  ]
+}
