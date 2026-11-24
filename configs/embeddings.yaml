@@ -1,0 +1,19 @@
+# Embedding generation configuration (scripts/embed_chunks.py).
+#
+# The embedding model is served by Ollama through its OpenAI-compatible
+# /v1/embeddings endpoint. Values are resolved in this order:
+#   CLI flag > environment variable > this file.
+# Environment variables:
+#   OLLAMA_BASE_URL  - Ollama base URL, e.g. http://localhost:11434/v1
+#   LLM_BASE_URL     - fallback base URL (shared with the answer pipeline)
+#   OLLAMA_API_KEY   - bearer token (usually not needed for local Ollama)
+#   QDRANT_URL       - Qdrant HTTP endpoint, e.g. http://localhost:6333
+embeddings:
+  base_url: "http://localhost:11434/v1"
+  model: "bge-m3"
+  api_key: ""
+  vector_size: 1024
+  distance: "Cosine"
+  collection: "csb_chunks"
+  batch_size: 128
+  qdrant_url: "http://localhost:6333"

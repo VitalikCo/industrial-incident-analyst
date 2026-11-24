@@ -17,7 +17,13 @@ __pycache__/
 !data/processed/manifest.jsonl
 !data/processed/collection_summary.json
 
-runs/
+runs/*
+!runs/answers/
+runs/answers/*
+!runs/answers/bm25_answers.jsonl
+!runs/answers/dense_answers.jsonl
+
+docs/retrieval-schemas.md
 
 # Keep the reproducible catalog outputs and their source-backed classification input.
 !data/processed/document_catalog.jsonl
