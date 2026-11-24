@@ -1,0 +1,16 @@
+# LLM API configuration for the answer pipeline (scripts/run_answers.py).
+#
+# Values are resolved in this order: CLI flag > environment variable > this file.
+# Environment variables:
+#   LLM_BASE_URL  - OpenAI-compatible base URL, e.g. http://localhost:11434/v1
+#   LLM_MODEL     - model name
+#   LLM_API_KEY   - bearer token
+llm:
+  base_url: ""
+  model: ""
+  api_key: ""
+  temperature: 0.2
+  max_tokens: 3000
+  timeout_seconds: 180
+  max_retries: 3
+  enable_thinking: false
