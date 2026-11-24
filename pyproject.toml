@@ -11,6 +11,8 @@ dependencies = [
   "PyYAML>=6.0.2,<7",
   "openpyxl>=3.1.5,<4",
   "pymupdf>=1.24,<2",
+  "rank_bm25>=0.2.2,<1",
+  "openai>=1.40,<2",
 ]
 
 [dependency-groups]
