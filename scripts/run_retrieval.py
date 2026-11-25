@@ -22,6 +22,7 @@ from pathlib import Path
 
 from retrieval.bm25 import BM25Retriever
 from retrieval.dense import DenseRetriever
+from retrieval.hybrid import HybridRetriever
 from retrieval.index import ChunkIndex, read_jsonl
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,10 +30,12 @@ DEFAULT_QUERIES = ROOT / "data/golden/query_seeds.jsonl"
 DEFAULT_OUTPUT = ROOT / "runs/retrieval/retrieval_results.jsonl"
 
 
-def _build_retriever(name: str, index: ChunkIndex):
+def _build_retriever(name: str, index: ChunkIndex, rerank: bool = True):
     """Instantiate the retrieval strategy by name."""
     if name == "dense":
         return DenseRetriever(index)
+    if name == "hybrid":
+        return HybridRetriever(index, rerank=rerank)
     return BM25Retriever(index)
 
 
@@ -40,9 +43,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--queries", type=Path, default=DEFAULT_QUERIES, help="Path to query_seeds.jsonl")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT, help="Output JSONL path")
-    parser.add_argument("--retriever", choices=["bm25", "dense"], default="bm25", help="Retrieval strategy")
+    parser.add_argument("--retriever", choices=["bm25", "dense", "hybrid"], default="bm25", help="Retrieval strategy")
     parser.add_argument("--top-k", type=int, default=10, help="Incidents returned per query")
     parser.add_argument("--chunk-cutoff", type=int, default=600, help="Chunks scored per query before aggregation")
+    parser.add_argument("--no-rerank", action="store_true", help="Hybrid: skip the cross-encoder reranker and return RRF top-k directly")
     parser.add_argument("--limit", type=int, default=None, help="Process only the first N queries")
     args = parser.parse_args()
 
@@ -51,7 +55,7 @@ def main() -> int:
         queries = queries[: args.limit]
 
     index = ChunkIndex()
-    retriever = _build_retriever(args.retriever, index)
+    retriever = _build_retriever(args.retriever, index, rerank=not args.no_rerank)
 
     records = []
     for query in queries:
@@ -61,6 +65,7 @@ def main() -> int:
             exclusion=query.get("source_case_exclusion"),
             chunk_cutoff=args.chunk_cutoff,
         )
+        print(f"{query['query_id']}: {len(hits)} incidents", flush=True)
         records.append(
             {
                 "query_id": query["query_id"],

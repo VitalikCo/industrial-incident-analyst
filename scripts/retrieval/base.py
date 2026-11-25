@@ -73,19 +73,19 @@ class BaseRetriever(Retriever):
                 excluded.add(incident_id)
         return excluded
 
-    def _build_hits(
+    def _aggregate_incidents(
         self,
         scored: list[tuple[int, float]],
-        top_k: int,
         exclusion: dict[str, Any] | None,
-    ) -> list[dict[str, Any]]:
-        """Aggregate chunk scores per incident and return the top-k hits.
+    ) -> dict[str, dict[str, Any]]:
+        """Aggregate chunk scores per incident and apply source-case exclusion.
 
         *scored* is a list of ``(chunk_index, score)`` pairs sorted by
         descending score. Chunk scores are summed per incident (union of
-        ``incident_ids`` and ``candidate_incident_ids``), incidents in
-        *exclusion* are dropped before ranking, and each hit carries its best
-        evidence chunks.
+        ``incident_ids`` and ``candidate_incident_ids``) and incidents in
+        *exclusion* are dropped. Each entry keeps the full contributing chunks
+        (sorted by descending score) so callers can build evidence or reranker
+        documents without re-aggregating.
         """
         incident_scores: dict[str, float] = defaultdict(float)
         incident_chunks: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -108,33 +108,52 @@ class BaseRetriever(Retriever):
                 )
 
         excluded = self.excluded_incident_ids(exclusion)
-        hits: list[dict[str, Any]] = []
+        aggregated: dict[str, dict[str, Any]] = {}
         for incident_id, score in incident_scores.items():
             if incident_id in excluded:
                 continue
             chunks = sorted(incident_chunks[incident_id], key=lambda item: item["score"], reverse=True)
-            evidence = []
-            for chunk in chunks[:MAX_EVIDENCE_CHUNKS]:
-                text = " ".join(chunk["text"].split())
-                evidence.append(
-                    {
-                        "chunk_id": chunk["chunk_id"],
-                        "document_id": chunk["document_id"],
-                        "page_start": chunk["page_start"],
-                        "page_end": chunk["page_end"],
-                        "section_path": chunk["section_path"],
-                        "text": text[:MAX_EVIDENCE_CHARS],
-                    }
-                )
-            hits.append(
+            aggregated[incident_id] = {"score": float(score), "chunks": chunks}
+        return aggregated
+
+    def _build_hit(self, incident_id: str, aggregated: dict[str, Any]) -> dict[str, Any]:
+        """Build one incident-level hit dict from an ``_aggregate_incidents`` entry."""
+        evidence = []
+        for chunk in aggregated["chunks"][:MAX_EVIDENCE_CHUNKS]:
+            text = " ".join(chunk["text"].split())
+            evidence.append(
                 {
-                    "incident_id": incident_id,
-                    "title": self.index.incident_title(incident_id),
-                    "score": float(score),
-                    "evidence_chunks": evidence,
+                    "chunk_id": chunk["chunk_id"],
+                    "document_id": chunk["document_id"],
+                    "page_start": chunk["page_start"],
+                    "page_end": chunk["page_end"],
+                    "section_path": chunk["section_path"],
+                    "text": text[:MAX_EVIDENCE_CHARS],
                 }
             )
+        return {
+            "incident_id": incident_id,
+            "title": self.index.incident_title(incident_id),
+            "score": aggregated["score"],
+            "evidence_chunks": evidence,
+        }
 
+    def _build_hits(
+        self,
+        scored: list[tuple[int, float]],
+        top_k: int,
+        exclusion: dict[str, Any] | None,
+    ) -> list[dict[str, Any]]:
+        """Aggregate chunk scores per incident and return the top-k hits.
+
+        *scored* is a list of ``(chunk_index, score)`` pairs sorted by
+        descending score. Chunk scores are summed per incident (union of
+        ``incident_ids`` and ``candidate_incident_ids``), incidents in
+        *exclusion* are dropped before ranking, and each hit carries its best
+        evidence chunks.
+        """
+        aggregated = self._aggregate_incidents(scored, exclusion)
+        hits = [self._build_hit(incident_id, agg) for incident_id, agg in aggregated.items()]
         hits.sort(key=lambda hit: hit["score"], reverse=True)
         hits = hits[:top_k]
         for rank, hit in enumerate(hits, start=1):
