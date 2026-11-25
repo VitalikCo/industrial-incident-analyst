@@ -22,6 +22,7 @@ from pathlib import Path
 
 from retrieval.bm25 import BM25Retriever
 from retrieval.dense import DenseRetriever
+from retrieval.hybrid import HybridRetriever
 from retrieval.index import ChunkIndex, read_jsonl
 from retrieval.llm import LLMClient
 from retrieval.pipeline import AnswerPipeline
@@ -31,10 +32,12 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_QUERIES = ROOT / "data/golden/query_seeds.jsonl"
 
 
-def _build_retriever(name: str, index: ChunkIndex):
+def _build_retriever(name: str, index: ChunkIndex, rerank: bool = True):
     """Instantiate the retrieval strategy by name."""
     if name == "dense":
         return DenseRetriever(index)
+    if name == "hybrid":
+        return HybridRetriever(index, rerank=rerank)
     return BM25Retriever(index)
 
 
@@ -43,12 +46,13 @@ def main() -> int:
     parser.add_argument("--queries", type=Path, default=DEFAULT_QUERIES, help="Path to query_seeds.jsonl")
     parser.add_argument("--output", type=Path, default=None, help="Answers JSONL path (default: runs/answers/{retriever}_answers.jsonl)")
     parser.add_argument("--failures", type=Path, default=None, help="Failures JSONL path (default: runs/answers/{retriever}_answers.failures.jsonl)")
-    parser.add_argument("--retriever", choices=["bm25", "dense"], default="bm25", help="Retrieval strategy")
+    parser.add_argument("--retriever", choices=["bm25", "dense", "hybrid"], default="bm25", help="Retrieval strategy")
     parser.add_argument("--limit", type=int, default=None, help="Process only the first N queries")
     parser.add_argument("--query-ids", nargs="*", default=None, help="Process only these query IDs")
     parser.add_argument("--top-k", type=int, default=10, help="Incidents returned per query")
     parser.add_argument("--chunk-cutoff", type=int, default=600, help="Chunks scored per query before aggregation")
     parser.add_argument("--recs-per-incident", type=int, default=5, help="Candidate recommendations per incident")
+    parser.add_argument("--no-rerank", action="store_true", help="Hybrid: skip the cross-encoder reranker and return RRF top-k directly")
     parser.add_argument("--base-url", default=None, help="Override LLM_BASE_URL")
     parser.add_argument("--model", default=None, help="Override LLM_MODEL")
     parser.add_argument("--api-key", default=None, help="Override LLM_API_KEY")
@@ -66,7 +70,7 @@ def main() -> int:
         queries = queries[: args.limit]
 
     index = ChunkIndex()
-    retriever = _build_retriever(args.retriever, index)
+    retriever = _build_retriever(args.retriever, index, rerank=not args.no_rerank)
     ranker = RecommendationRanker(index)
     llm = LLMClient(base_url=args.base_url, model=args.model, api_key=args.api_key)
     pipeline = AnswerPipeline(

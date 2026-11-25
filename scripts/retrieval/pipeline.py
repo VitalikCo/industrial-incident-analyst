@@ -76,10 +76,17 @@ class AnswerPipeline:
         self.ranker = ranker or RecommendationRanker(self.index)
         self.llm = llm or LLMClient()
         self.retriever_name = retriever_name
-        # Human-readable labels used in the prompts; the BM25 defaults keep the
-        # original wording byte-identical.
-        self.retriever_label = "BM25" if retriever_name == "bm25" else "dense vector similarity"
-        self.search_description = "BM25 lexical" if retriever_name == "bm25" else "dense vector"
+        # Human-readable labels used in the prompts; the BM25/dense defaults keep
+        # the original wording byte-identical.
+        if retriever_name == "bm25":
+            self.retriever_label = "BM25"
+            self.search_description = "BM25 lexical"
+        elif retriever_name == "dense":
+            self.retriever_label = "dense vector similarity"
+            self.search_description = "dense vector"
+        else:  # hybrid
+            self.retriever_label = "hybrid BM25 + dense (reranked)"
+            self.search_description = "hybrid BM25 + dense vector"
 
     def _build_user_prompt(
         self,

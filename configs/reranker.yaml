@@ -1,0 +1,12 @@
+# Reranker configuration for the hybrid retriever (scripts/retrieval/reranker.py).
+#
+# The reranker is a local Cohere-compatible cross-encoder service. Values are
+# resolved in this order: constructor argument > environment variable > this file.
+# Environment variables:
+#   RERANKER_BASE_URL  - base URL of the reranker service, e.g. http://localhost:7997
+#   RERANKER_MODEL     - model name, e.g. BAAI/bge-reranker-v2-m3
+reranker:
+  base_url: "http://localhost:7997"
+  model: "BAAI/bge-reranker-v2-m3"
+  timeout_seconds: 600
+  max_retries: 3
