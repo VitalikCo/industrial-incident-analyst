@@ -22,7 +22,7 @@ runs/*
 runs/answers/*
 !runs/answers/bm25_answers.jsonl
 !runs/answers/dense_answers.jsonl
-!runs\answers\hybrid_answers.jsonl
+!runs/answers/hybrid_answers.jsonl
 
 docs/retrieval-schemas.md
 
