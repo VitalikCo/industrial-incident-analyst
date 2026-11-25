@@ -14,7 +14,7 @@ RECOMMENDATION_SNAPSHOT_DATE = "2026-09-16"
 SYSTEM_PROMPT = """\
 You are an industrial incident analyst working with a corpus of U.S. Chemical Safety and
 Hazard Investigation Board (CSB) investigation reports. You are given a description of a new
-incident and a ranked list of candidate historical incidents retrieved by a BM25 lexical
+incident and a ranked list of candidate historical incidents retrieved by a {search_description}
 search, together with evidence snippets and candidate CSB safety recommendations.
 
 Identify the historical incidents that are genuinely similar to the new incident and the CSB
@@ -69,11 +69,17 @@ class AnswerPipeline:
         retriever: BM25Retriever | None = None,
         ranker: RecommendationRanker | None = None,
         llm: LLMClient | None = None,
+        retriever_name: str = "bm25",
     ) -> None:
         self.index = index or ChunkIndex()
         self.retriever = retriever or BM25Retriever(self.index)
         self.ranker = ranker or RecommendationRanker(self.index)
         self.llm = llm or LLMClient()
+        self.retriever_name = retriever_name
+        # Human-readable labels used in the prompts; the BM25 defaults keep the
+        # original wording byte-identical.
+        self.retriever_label = "BM25" if retriever_name == "bm25" else "dense vector similarity"
+        self.search_description = "BM25 lexical" if retriever_name == "bm25" else "dense vector"
 
     def _build_user_prompt(
         self,
@@ -85,7 +91,7 @@ class AnswerPipeline:
         lines.append("NEW INCIDENT DESCRIPTION:")
         lines.append(query_text)
         lines.append("")
-        lines.append("CANDIDATE HISTORICAL INCIDENTS (ranked by BM25):")
+        lines.append(f"CANDIDATE HISTORICAL INCIDENTS (ranked by {self.retriever_label}):")
         for hit in hits:
             lines.append("")
             lines.append(f"--- Incident rank {hit['rank']} ---")
@@ -123,7 +129,8 @@ class AnswerPipeline:
             query_text, top_k=top_k, exclusion=exclusion, chunk_cutoff=chunk_cutoff
         )
         user_prompt = self._build_user_prompt(query_text, hits, recs_per_incident)
-        raw = self.llm.chat_json(SYSTEM_PROMPT, user_prompt)
+        system_prompt = SYSTEM_PROMPT.replace("{search_description}", self.search_description)
+        raw = self.llm.chat_json(system_prompt, user_prompt)
         answer = QueryAnswer.model_validate(raw)
         # Guarantee the dated snapshot limitation whenever recommendations are cited.
         if answer.similar_incidents and not any(
